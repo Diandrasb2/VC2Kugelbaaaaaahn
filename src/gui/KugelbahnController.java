@@ -1,13 +1,18 @@
 package gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Translate;
+import javafx.util.Duration;
 
 public class KugelbahnController {
 
@@ -20,37 +25,27 @@ public class KugelbahnController {
 	@FXML
 	private Slider GravitySlider;
 	@FXML
-	private Slider StartBWSlider;
+	private Slider StartVSlider;
 	@FXML
 	private Label GravityLabel;
 	@FXML
-	private Label StartBWLabel;
+	private Label StartVLabel;
 	@FXML
 	private Rectangle Ebene1;
 	@FXML
 	private Button StartButton;
 
+	Canvas canvas;
 
-	//double KugelX = Kugel.getLayoutX();
-	//double KugelY = Kugel.getLayoutY();
+	double KugelPositionY;
 
+	double dT = 0.025;	//delta T
+	double t;	
+	double s = 50;
+	double v;
+	// a = gravityValue
 
-	// Konstante Beschleunigung
-	//double v0 = 0;
-	//double a;
-	//double t;
-
-	//double v = v0 + a * t;
-
-	//double s0 = 0;
-	//double s = s0 + v0 * t + 0.5 * a * t * t;
-
-	//Circle Kugel = new Circle();
-	//TranslateTransition move = new TranslateTransition(Duration.millis(2000), Kreis);
-
-
-
-	//Gravity = gravityValue
+	//Gravitation per Slider einstellen, auslesen und anzeigen
 	@FXML
 	public void onDragDone() {
 		double gravityValue = GravitySlider.getValue();
@@ -58,38 +53,61 @@ public class KugelbahnController {
 		GravityLabel.setText(gravityValue + " m/s²");
 	}
 
-
+	//Startgeschwindigkeit per Slider einstellen, auslesen und anzeigen
 	@FXML
 	public void onMouseReleased() {
-		double StartBWValue = StartBWSlider.getValue();
-		System.out.println("Startbewegung Value: " + StartBWValue);
-		StartBWLabel.setText(StartBWValue + " m/s");
+		double StartVValue = StartVSlider.getValue();
+		System.out.println("Startgeschwindigkeit Value: " + StartVValue);
+		StartVLabel.setText(StartVValue + " m/s");
 	}
 
-	public void movement() {
+	//Kugel bewegt sich nach unten bis zum Boden
+	public void movement(GraphicsContext graphicsContext,double gravityValue) {
+		for(int i = 1; i <= 100; i++) {
+			v = StartVSlider.getValue();
+			v = v + gravityValue * dT;
+			s = s + v * dT + 0.5 * gravityValue * Math.pow(dT, 2);	// Strecke S
+			if(Kugel.getLayoutY() >= 614) {
+				System.out.println("Boden");
+				v = -v;
+			}else{
+				Kugel.setLayoutY(s);
+			}
+		}
+	}
+	// Startknopf betätigen --> Kugel fängt an sich zu bewegen und man kann sie verschieben
+	@FXML
+	public void onStart() {
+		makeDraggable(Kugel);
+		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
-		for (int b = 1; b <= 10; b++) {
-			double KugelPositionY = Kugel.getLayoutY() + gravityValue;
-			Kugel.setLayoutY(KugelPositionY);
-		}
+		System.out.println("Button pressed.");
+
+		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue)));
+		timeline.setCycleCount(Timeline.INDEFINITE);
+
+		timeline.play();
+
 	}
 
-	
-		@FXML
-		public void onStart() {
-			System.out.println("Button pressed.");
-			movement();
+	// Drag and Drop Funktion
+	private double startX;
+	private double startY;
 
-			//double KugelGr = Kugel.getLayoutY() - gravityValue;
-			//Kugel.setLayoutY(KugelGr);
+	private void makeDraggable(Node node) {
+		node.setOnMousePressed(e -> {
+			startX = e.getSceneX() - node.getLayoutX();
+			startY = e.getSceneY() - node.getLayoutY();
+		});
 
-		}
+		node.setOnMouseDragged(e -> {
+			node.setLayoutX(e.getSceneX() - startX);
+			node.setLayoutY(e.getSceneY() - startY);
+		});
 	}
 
-
-
-	//	Translate translate = new Translate();
-	//	Kugel.getTransforms();
+}
 
 
 
