@@ -41,8 +41,6 @@ public class KugelbahnController {
 
 	double dT = 0.025;	//delta T
 	double t;	
-	double s = 50;
-	double v;
 	// a = gravityValue
 
 	//Gravitation per Slider einstellen, auslesen und anzeigen
@@ -64,8 +62,9 @@ public class KugelbahnController {
 	double vx;
 	double vy;
 	
-	double sx;
-	double sy;
+	// Startposition
+	double sx = 100;
+	double sy = 100;
 	
 	//Kugel bewegt sich nach unten bis zum Boden
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
@@ -74,12 +73,13 @@ public class KugelbahnController {
 		//for(int i = 1; i <= 500; i++) {  //ohne Schleife bewegt sich die Kugel, aber sehr langsam weil der denkt dass der Screen 650000+ Meter groß ist wegen 1000er Faktor
 			checkCollision(Kugel, Ebene1);
 			vx = vx + 0 * dT;
-			vy = vy - gravityValue * dT;
-			sx = sx + vx * dT + 0.5 * gravityValue * Math.pow(dT, 2);	// Strecke S
+			vy = vy + gravityValue * dT;
+			sx = sx + vx * dT + 0.5 * 0 * Math.pow(dT, 2);	// Strecke S
 			sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 			if(Kugel.getLayoutY() >= 614) {
 				System.out.println("Boden");
 				vy = -vy;
+				
 			}else{
 				Kugel.setLayoutX(sx);
 				Kugel.setLayoutY(sy);
@@ -96,7 +96,7 @@ public class KugelbahnController {
 
 
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
-		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue)));
+		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 
 		timeline.play();
