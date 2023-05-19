@@ -61,31 +61,39 @@ public class KugelbahnController {
 
 	double vx;
 	double vy;
-	
+
 	// Startposition
 	double sx = 100;
 	double sy = 100;
-	
+
+	boolean collided = false;
+
 	//Kugel bewegt sich nach unten bis zum Boden
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
 		vx = StartVSlider.getValue();
 		vy = StartVSlider.getValue();
-		//for(int i = 1; i <= 500; i++) {  //ohne Schleife bewegt sich die Kugel, aber sehr langsam weil der denkt dass der Screen 650000+ Meter groß ist wegen 1000er Faktor
-			checkCollision(Kugel, Ebene1);
-			vx = vx + 0 * dT;
-			vy = vy + gravityValue * dT;
-			sx = sx + vx * dT + 0.5 * 0 * Math.pow(dT, 2);	// Strecke S
-			sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
-			if(Kugel.getLayoutY() >= 614) {
-				System.out.println("Boden");
-				vy = -vy;
-				
-			}else{
-				Kugel.setLayoutX(sx);
-				Kugel.setLayoutY(sy);
-			}
-		//}
+
+		vx = vx + 0 * dT;
+		vy = vy + gravityValue * dT;
+		sx = sx + vx * dT + 0.5 * 0 * Math.pow(dT, 2);	// Strecke S
+		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
+
+		//collision(Kugel, Ebene1);
+		checkCollision(Kugel, Ebene1);
+		if(collided == true) {
+			vy = 0;							//funktioniert nicht
+		}
+
+		if(Kugel.getLayoutY() >= 614) {
+			System.out.println("Boden");
+			vy = -vy;
+
+		}else{
+			Kugel.setLayoutX(sx);
+			Kugel.setLayoutY(sy);
+		}
 	}
+
 	// Startknopf betätigen --> Kugel fängt an sich zu bewegen und man kann sie verschieben
 	@FXML
 	public void onStart() {
@@ -121,10 +129,14 @@ public class KugelbahnController {
 
 
 	public void checkCollision(Circle Kugel, Rectangle Ebene1) {
-		if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
-			System.out.println("Kollision");
+		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
+			//System.out.println("Kollision");
+		//}
 
+		if(Kugel.getLayoutX() >= 30 && Kugel.getLayoutX() <= 330 && Kugel.getLayoutY() >= 300 && Kugel.getLayoutY() <= 350) {
+			System.out.println("Kollision");
 		}
+		
 	}
 
 }
