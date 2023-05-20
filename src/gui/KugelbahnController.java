@@ -67,9 +67,10 @@ public class KugelbahnController {
 	double sy = 100;
 
 	boolean collided = false;
-
+	
 	//Kugel bewegt sich nach unten bis zum Boden
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
+		
 		vx = StartVSlider.getValue();
 		vy = StartVSlider.getValue();
 
@@ -81,14 +82,15 @@ public class KugelbahnController {
 		//collision(Kugel, Ebene1);
 		checkCollision(Kugel, Ebene1);
 		if(collided == true) {
-			vy = 0;							//funktioniert nicht
+			vy = -vy;	
+			
 		}
 
-		if(Kugel.getLayoutY() >= 614) {
+		else if(Kugel.getLayoutY() >= 614) {
 			System.out.println("Boden");
 			vy = -vy;
 
-		}else{
+		}else {
 			Kugel.setLayoutX(sx);
 			Kugel.setLayoutY(sy);
 		}
@@ -142,6 +144,7 @@ public class KugelbahnController {
 		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350) {
 			System.out.println("Kollision");
 			collided = true;
+			
 		}
 	}
 }
