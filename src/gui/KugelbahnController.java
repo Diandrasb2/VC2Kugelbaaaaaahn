@@ -67,33 +67,31 @@ public class KugelbahnController {
 	double sy = 100;
 
 	boolean collided = false;
-	
+
 	//Kugel bewegt sich nach unten bis zum Boden
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
-		
-		vx = StartVSlider.getValue();
-		vy = StartVSlider.getValue();
 
-		vx = vx + 0 * dT;
+
+		vx = vx + 0 * dT; //Berechnung für die nächste Bewegung
 		vy = vy + gravityValue * dT;
 		sx = sx + vx * dT + 0.5 * 0 * Math.pow(dT, 2);	// Strecke S
 		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
 		//collision(Kugel, Ebene1);
-		checkCollision(Kugel, Ebene1);
-		if(collided == true) {
-			vy = -vy;	
-			
+
+		if(checkCollision(Kugel, Ebene1)) {
+			vy = -vy;			
+			System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");//funktioniert nicht
 		}
 
 		else if(Kugel.getLayoutY() >= 614) {
 			System.out.println("Boden");
 			vy = -vy;
 
-		}else {
-			Kugel.setLayoutX(sx);
-			Kugel.setLayoutY(sy);
 		}
+		Kugel.setLayoutX(sx);
+		Kugel.setLayoutY(sy);
+
 	}
 
 	// Startknopf betätigen --> Kugel fängt an sich zu bewegen und man kann sie verschieben
@@ -103,7 +101,8 @@ public class KugelbahnController {
 		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
 		System.out.println("Button pressed.");
-
+		vx = StartVSlider.getValue();
+		vy = StartVSlider.getValue();
 
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
@@ -130,25 +129,24 @@ public class KugelbahnController {
 	}
 
 
-	public void checkCollision(Circle Kugel, Rectangle Ebene1) {
+	public boolean checkCollision(Circle Kugel, Rectangle Ebene1) {
 		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
 		//System.out.println("Kollision");
 		//}
+//Kollision untere Kante
+		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350
+				&& vy >= 0) {
+			System.out.println("Kollision");
+			return true;
 
-		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350) {
-			System.out.println("Kollision");
-			collided = true;
-			
 		}
-		
-		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350) {
+//Kollision obere Kante
+		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350
+				&& vy < 0) {
 			System.out.println("Kollision");
-			collided = true;
-			
+			return true;
 		}
+
+		return false;
 	}
 }
-
-
-
-
