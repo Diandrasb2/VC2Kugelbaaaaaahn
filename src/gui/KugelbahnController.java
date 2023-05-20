@@ -130,15 +130,20 @@ public class KugelbahnController {
 
 	public void checkCollision(Circle Kugel, Rectangle Ebene1) {
 		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
-			//System.out.println("Kollision");
+		//System.out.println("Kollision");
 		//}
 
-		if(Kugel.getLayoutX() >= 30 && Kugel.getLayoutX() <= 330 && Kugel.getLayoutY() >= 300 && Kugel.getLayoutY() <= 350) {
+		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350) {
 			System.out.println("Kollision");
+			collided = true;
+			
 		}
 		
+		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350) {
+			System.out.println("Kollision");
+			collided = true;
+		}
 	}
-
 }
 
 
