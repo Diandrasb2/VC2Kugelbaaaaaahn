@@ -74,21 +74,31 @@ public class KugelbahnController {
 
 		vx = vx + 0 * dT; //Berechnung für die nächste Bewegung
 		vy = vy + gravityValue * dT;
-		sx = sx + vx * dT + 0.5 * 0 * Math.pow(dT, 2);	// Strecke S
+		sx = sx + vx * dT + 0.5 * 15000 * Math.pow(dT, 2);	// Strecke S Wind von links (15000)
 		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
 		//collision(Kugel, Ebene1);
 
 		if(checkCollision(Kugel, Ebene1)) {
 			vy = -vy;			
-			System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");//funktioniert nicht
+			System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");
 		}
 
 		else if(Kugel.getLayoutY() >= 614) {
 			System.out.println("Boden");
-			vy = -vy;
-
+			vy = -500;
 		}
+		
+		else if(Kugel.getLayoutX() >= 714) {
+			System.out.println("Rechte Wand");
+			vx = -400;
+		}
+		
+		else if(Kugel.getLayoutX() <= 36) {
+			System.out.println("Linke Wand");
+			vx = 200;
+		}
+		
 		Kugel.setLayoutX(sx);
 		Kugel.setLayoutY(sy);
 
