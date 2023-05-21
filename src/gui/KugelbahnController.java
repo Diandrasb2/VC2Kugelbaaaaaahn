@@ -34,6 +34,12 @@ public class KugelbahnController {
 	private Rectangle Ebene1;
 	@FXML
 	private Button StartButton;
+	@FXML
+	private Button cpButton;
+	@FXML
+	private Label vxAnzeige;
+	@FXML
+	private Label vyAnzeige;
 
 	Canvas canvas;
 
@@ -63,14 +69,20 @@ public class KugelbahnController {
 	double vy;
 
 	// Startposition
-	double sx = 100;
-	double sy = 100;
+	//double sx = 100;
+	//double sy = 100;
+	
+	double sx;
+	double sy;
+
 
 	boolean collided = false;
 
 	//Kugel bewegt sich nach unten bis zum Boden
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
 
+		vxAnzeige.setText("x-Richtung: " + vx);
+		vyAnzeige.setText("y-Richtung: " + vy);
 
 		vx = vx + 0 * dT; //Berechnung für die nächste Bewegung
 		vy = vy + gravityValue * dT;
@@ -88,38 +100,50 @@ public class KugelbahnController {
 			System.out.println("Boden");
 			vy = -500;
 		}
-		
+
 		else if(Kugel.getLayoutX() >= 714) {
 			System.out.println("Rechte Wand");
 			vx = -400;
 		}
-		
+
 		else if(Kugel.getLayoutX() <= 36) {
 			System.out.println("Linke Wand");
-			vx = 200;
+			vx = 100;
 		}
-		
+
 		Kugel.setLayoutX(sx);
 		Kugel.setLayoutY(sy);
-
 	}
 
 	// Startknopf betätigen --> Kugel fängt an sich zu bewegen und man kann sie verschieben
 	@FXML
 	public void onStart() {
-		makeDraggable(Kugel);
 		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
 		System.out.println("Button pressed.");
 		vx = StartVSlider.getValue();
 		vy = StartVSlider.getValue();
+		
+		sx = Kugel.getLayoutX();
+		sy = Kugel.getLayoutY();
+		
 
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 
+		//if(pause == true) {
+		//	timeline.pause();
+		//}else if (pause == false){
 		timeline.play();
+		//}
+	}
 
+	//Change Position Button
+	@FXML
+	public void onCP() {
+		System.out.println("Change Position activated.");
+		makeDraggable(Kugel);
 	}
 
 	// Drag and Drop Funktion
@@ -143,14 +167,14 @@ public class KugelbahnController {
 		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
 		//System.out.println("Kollision");
 		//}
-//Kollision untere Kante
+		//Kollision untere Kante
 		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350
 				&& vy >= 0) {
 			System.out.println("Kollision");
 			return true;
 
 		}
-//Kollision obere Kante
+		//Kollision obere Kante
 		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350
 				&& vy < 0) {
 			System.out.println("Kollision");
