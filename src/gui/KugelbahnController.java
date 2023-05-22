@@ -1,8 +1,11 @@
 package gui;
 
+import java.util.ArrayList;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXML;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -11,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -48,6 +52,10 @@ public class KugelbahnController {
 	double dT = 0.025;	//delta T
 	double t;	
 
+	// Liste von Linien vom Fenster wird erstellt
+	ArrayList<Line> lines = new ArrayList<Line>();
+
+
 	//Gravitation per Slider einstellen, auslesen und anzeigen
 	@FXML
 	public void onDragDone() {
@@ -64,56 +72,73 @@ public class KugelbahnController {
 		StartVLabel.setText(StartVValue + " m/s");
 	}
 
-	// Geschwindigkeit x & y
+	//Geschwindigkeit v
 	double vx;
 	double vy;
 
-	// Startposition x & y
+	// Startposition bzw Position der Kugel
 	double sx;
 	double sy;
 
-	// Wind von links nach rechts (-->)
-	double ax = 15000;
-
-	boolean collided = false;
+	//Radius Kugel
+	double radius = 36;
 
 	//Kugel bewegt sich
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
 
-		vxAnzeige.setText("x-Richtung: " + (vx + ax));
-		vyAnzeige.setText("y-Richtung: " + vy);
+		//Position wird ausgegeben
+		Kugel.setLayoutX(sx);
+		Kugel.setLayoutY(sy);
+
+
+		//Bei einer Kollision wird die Richtung der Kugel geändert
+		lines.forEach((line)-> {
+			//System.out.println(getDistance(line));
+			if(getDistance(line) <= radius) {
+				System.out.println("Kollision");
+				changeDirection(line);
+			}
+		});
 
 		//Berechnung für die nächste Bewegung
 		vx = vx + 0 * dT; 
 		vy = vy + gravityValue * dT;
 
-		sx = sx + vx * dT + 0.5 * ax * Math.pow(dT, 2);	// Strecke S
+		//Berechnung der Position der Kugel
+		sx = sx + vx * dT + 0.5 * 1 * Math.pow(dT, 2);
 		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
-		//collision(Kugel, Ebene1);
+		//Anzeige der Geschwindigkeit
+		vxAnzeige.setText("x-Richtung: " + vx);
+		vyAnzeige.setText("y-Richtung: " + vy);
 
+
+		/** ---Alte Kollisionserkennung der Wände---
 		if(checkCollision(Kugel, Ebene1)) {
 			vy = -vy;			
-			System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");
+			//System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");
 		}
 
 		else if(Kugel.getLayoutY() >= 614) {
-			System.out.println("Boden");
+			//System.out.println("Boden");
 			vy = -500;
 		}
 
 		else if(Kugel.getLayoutX() >= 714) {
-			System.out.println("Rechte Wand");
+			//System.out.println("Rechte Wand");
 			vx = -400;
 		}
 
 		else if(Kugel.getLayoutX() <= 36) {
-			System.out.println("Linke Wand");
-			vx = 0;
+			//System.out.println("Linke Wand");
+			vx = 100;
 		}
 
-		Kugel.setLayoutX(sx);
-		Kugel.setLayoutY(sy);
+		if(in()) {
+			Kugel.setLayoutX(sx);
+			Kugel.setLayoutY(300 - 36);
+			System.out.println(vx + " " + vy);
+		}*/
 	}
 
 	// Startknopf betätigen --> Kugel fängt an sich zu bewegen
@@ -122,25 +147,29 @@ public class KugelbahnController {
 		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
 		System.out.println("Button pressed.");
-		vx = StartVSlider.getValue();
+
+		// Startgeschwindigkeit
+		vx = 300; 
 		vy = StartVSlider.getValue();
 
+		//Position der Kugel
 		sx = Kugel.getLayoutX();
 		sy = Kugel.getLayoutY();
 
+		// Ränder des Feldes
+		lines.add(new Line(0, 0, 750, 0)); //oben links --> oben rechts
+		lines.add(new Line(750, 0, 750, 650)); // oben rechts --> unten rechts
+		lines.add(new Line(750, 650, 0, 650)); // unten rechts --> unten links
+		lines.add(new Line(0, 650, 0, 0)); //unten links --> oben links
 
+		//Animation
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
 		timeline.setCycleCount(Timeline.INDEFINITE);
-
-		//if(pause == true) {
-		//	timeline.pause();
-		//}else if (pause == false){
 		timeline.play();
-		//}
 	}
 
-	//Change Position Button (Die Position der Kugel kann nun geändert werden.)
+	//Change Position Button (Drag & Drop)
 	@FXML
 	public void onCP() {
 		System.out.println("Change Position activated.");
@@ -163,26 +192,97 @@ public class KugelbahnController {
 		});
 	}
 
-
-	// Kollisionserkennung
+	//Kollisionserkennung der Ebene (noch mit festen Werten)
 	public boolean checkCollision(Circle Kugel, Rectangle Ebene1) {
 		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
 		//System.out.println("Kollision");
 		//}
-		//Kollision untere Kante
-		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350
-				&& vy >= 0) {
-			System.out.println("Kollision");
-			return true;
 
-		}
 		//Kollision obere Kante
 		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350
 				&& vy < 0) {
-			System.out.println("Kollision");
+			//System.out.println("Kollision");
 			return true;
 		}
 
+		//Kollision untere Kante
+		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350
+				&& vy >= 0) {
+			//System.out.println("Kollision");
+			return true;
+		}
 		return false;
 	}
+
+	//Prüfen ob die Kugel in die Ebene eindringt
+	public boolean in() {
+
+		//Obere Kante
+		if(
+				Kugel.getLayoutX() - radius >= 30 
+				&& Kugel.getLayoutX() - radius <= 330 
+				&& Kugel.getLayoutY() - radius >= 300 
+				&& Kugel.getLayoutY() - radius <= 350
+				) {
+			return true;
+		}
+		
+		//Untere Kante
+		if(
+				Kugel.getLayoutX() + radius >= 30 
+				&& Kugel.getLayoutX() + radius <= 330 
+				&& Kugel.getLayoutY() + radius >= 300 
+				&& Kugel.getLayoutY() + radius <= 350
+				) {
+			return true;
+
+		}
+		return false;
+	}
+
+	//Vektorlänge berechnen
+	public double getVectorLength(double x, double y) {
+		return Math.sqrt(x*x + y*y);
+	}
+
+	//Lotfußpunkt berechnen
+	public Point2D getBasePoint(Point2D point, Line line) {
+		Point2D richtungsvektor = new Point2D(line.getEndX() - line.getStartX(), line.getEndY() - line.getStartY());
+		//System.out.println("Richtungsvektor: " + richtungsvektor);
+		Point2D ortsvektor = new Point2D(line.getStartX() - point.getX(), line.getStartY() - point.getY());
+		//System.out.println("Ortsvektor: " + ortsvektor);
+
+		double skalarRichtung = richtungsvektor.dotProduct(richtungsvektor);
+		//System.out.println("Skalarrichtung: " + skalarRichtung);
+		double skalarOrt = ortsvektor.dotProduct(richtungsvektor);
+		//System.out.println("Skalar Ort: " + skalarOrt);
+
+		double scale = skalarRichtung / (-1 * skalarOrt);
+
+		return new Point2D(line.getStartX() + richtungsvektor.getX() / scale, line.getStartY() + richtungsvektor.getY() / scale);
+	}
+
+	//Distanz zwischen Kugel und Ebene berechnen
+	public double getDistance(Line line) {
+		Point2D basepoint = getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line);
+		return getVectorLength(basepoint.getX() - Kugel.getLayoutX(), basepoint.getY() - Kugel.getLayoutY());
+	}
+	
+	// Kollisionshandling: 
+	public void changeDirection(Line line) {
+		Point2D basepoint = getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line);
+		
+		Line normal = new Line(Kugel.getLayoutX(), Kugel.getLayoutY(), basepoint.getX(), basepoint.getY());
+		
+		Point2D corner = getBasePoint(new Point2D(Kugel.getLayoutX() + vx, Kugel.getLayoutY() + vy), normal);
+		Point2D orthogonal = new Point2D(Kugel.getLayoutX() - corner.getX(), Kugel.getLayoutY() - corner.getY());
+		Point2D parallel = new Point2D(Kugel.getLayoutX() + vx - corner.getX(), Kugel.getLayoutY() + vy - corner.getY());
+		
+		// Addition Vektor x und y
+		Point2D sum = parallel.add(orthogonal);
+		
+		vx = sum.getX();
+		vy = sum.getY();
+	}
+
 }
