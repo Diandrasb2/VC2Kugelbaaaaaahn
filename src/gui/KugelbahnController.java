@@ -47,7 +47,6 @@ public class KugelbahnController {
 
 	double dT = 0.025;	//delta T
 	double t;	
-	// a = gravityValue
 
 	//Gravitation per Slider einstellen, auslesen und anzeigen
 	@FXML
@@ -65,28 +64,30 @@ public class KugelbahnController {
 		StartVLabel.setText(StartVValue + " m/s");
 	}
 
+	// Geschwindigkeit x & y
 	double vx;
 	double vy;
 
-	// Startposition
-	//double sx = 100;
-	//double sy = 100;
-	
+	// Startposition x & y
 	double sx;
 	double sy;
 
+	// Wind von links nach rechts (-->)
+	double ax = 15000;
 
 	boolean collided = false;
 
-	//Kugel bewegt sich nach unten bis zum Boden
+	//Kugel bewegt sich
 	public void movement(GraphicsContext graphicsContext, double gravityValue) {
 
-		vxAnzeige.setText("x-Richtung: " + vx);
+		vxAnzeige.setText("x-Richtung: " + (vx + ax));
 		vyAnzeige.setText("y-Richtung: " + vy);
 
-		vx = vx + 0 * dT; //Berechnung für die nächste Bewegung
+		//Berechnung für die nächste Bewegung
+		vx = vx + 0 * dT; 
 		vy = vy + gravityValue * dT;
-		sx = sx + vx * dT + 0.5 * 15000 * Math.pow(dT, 2);	// Strecke S Wind von links (15000)
+
+		sx = sx + vx * dT + 0.5 * ax * Math.pow(dT, 2);	// Strecke S
 		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
 		//collision(Kugel, Ebene1);
@@ -108,14 +109,14 @@ public class KugelbahnController {
 
 		else if(Kugel.getLayoutX() <= 36) {
 			System.out.println("Linke Wand");
-			vx = 100;
+			vx = 0;
 		}
 
 		Kugel.setLayoutX(sx);
 		Kugel.setLayoutY(sy);
 	}
 
-	// Startknopf betätigen --> Kugel fängt an sich zu bewegen und man kann sie verschieben
+	// Startknopf betätigen --> Kugel fängt an sich zu bewegen
 	@FXML
 	public void onStart() {
 		canvas = new Canvas(750, 650);
@@ -123,10 +124,10 @@ public class KugelbahnController {
 		System.out.println("Button pressed.");
 		vx = StartVSlider.getValue();
 		vy = StartVSlider.getValue();
-		
+
 		sx = Kugel.getLayoutX();
 		sy = Kugel.getLayoutY();
-		
+
 
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
@@ -139,7 +140,7 @@ public class KugelbahnController {
 		//}
 	}
 
-	//Change Position Button
+	//Change Position Button (Die Position der Kugel kann nun geändert werden.)
 	@FXML
 	public void onCP() {
 		System.out.println("Change Position activated.");
@@ -163,6 +164,7 @@ public class KugelbahnController {
 	}
 
 
+	// Kollisionserkennung
 	public boolean checkCollision(Circle Kugel, Rectangle Ebene1) {
 		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
 		//System.out.println("Kollision");
