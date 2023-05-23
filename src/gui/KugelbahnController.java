@@ -199,14 +199,20 @@ public class KugelbahnController {
 		//}
 
 		//Kollision obere Kante
-		if(Kugel.getLayoutX() -36 >= 30 && Kugel.getLayoutX() -36 <= 330 && Kugel.getLayoutY() -36 >= 300 && Kugel.getLayoutY() -36 <= 350
+		if(Kugel.getLayoutX() - radius >= 30 
+				&& Kugel.getLayoutX() - radius <= 330 
+				&& Kugel.getLayoutY() - radius >= 300 
+				&& Kugel.getLayoutY() - radius <= 350
 				&& vy < 0) {
 			//System.out.println("Kollision");
 			return true;
 		}
 
 		//Kollision untere Kante
-		if(Kugel.getLayoutX() +36 >= 30 && Kugel.getLayoutX() +36 <= 330 && Kugel.getLayoutY() +36 >= 300 && Kugel.getLayoutY() +36 <= 350
+		if(Kugel.getLayoutX() + radius >= 30 
+				&& Kugel.getLayoutX() + radius <= 330 
+				&& Kugel.getLayoutY() + radius >= 300 
+				&& Kugel.getLayoutY() + radius <= 350
 				&& vy >= 0) {
 			//System.out.println("Kollision");
 			return true;
@@ -226,7 +232,7 @@ public class KugelbahnController {
 				) {
 			return true;
 		}
-		
+
 		//Untere Kante
 		if(
 				Kugel.getLayoutX() + radius >= 30 
@@ -267,20 +273,20 @@ public class KugelbahnController {
 		Point2D basepoint = getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line);
 		return getVectorLength(basepoint.getX() - Kugel.getLayoutX(), basepoint.getY() - Kugel.getLayoutY());
 	}
-	
-	// Kollisionshandling: 
+
+	// Kollisionshandling: Wände 
 	public void changeDirection(Line line) {
 		Point2D basepoint = getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line);
-		
+
 		Line normal = new Line(Kugel.getLayoutX(), Kugel.getLayoutY(), basepoint.getX(), basepoint.getY());
-		
+
 		Point2D corner = getBasePoint(new Point2D(Kugel.getLayoutX() + vx, Kugel.getLayoutY() + vy), normal);
 		Point2D orthogonal = new Point2D(Kugel.getLayoutX() - corner.getX(), Kugel.getLayoutY() - corner.getY());
 		Point2D parallel = new Point2D(Kugel.getLayoutX() + vx - corner.getX(), Kugel.getLayoutY() + vy - corner.getY());
-		
+
 		// Addition Vektor x und y
 		Point2D sum = parallel.add(orthogonal);
-		
+
 		vx = sum.getX();
 		vy = sum.getY();
 	}
