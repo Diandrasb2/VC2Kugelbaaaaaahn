@@ -13,45 +13,52 @@
 	<right>
 		<Pane fx:id="SecondBG" prefHeight="200.0" prefWidth="250.0" style="-fx-background-color: cccccc;" BorderPane.alignment="CENTER">
 			<children>
-				<Slider fx:id="GravitySlider" layoutX="15.0" layoutY="96.0" max="25.0" onMouseReleased="#onDragDone" prefHeight="15.0" prefWidth="213.0" showTickLabels="true" value="9.81" />
-				<Label layoutX="18.0" layoutY="55.0" prefHeight="35.0" prefWidth="209.0" text="Gravitation [m/s²]">
-					<font>
-						<Font name="Avenir Next Bold" size="18.0" />
-					</font>
-				</Label>
-				<Label layoutX="17.0" layoutY="214.0" prefHeight="35.0" prefWidth="209.0" text="Startgeschwindigkeit [m/s]">
+				<Slider fx:id="GravitySlider" layoutX="10.0" layoutY="76.0" max="25.0" onMouseReleased="#onDragDone" prefHeight="15.0" prefWidth="213.0" showTickLabels="true" value="9.81" />
+				<Label layoutX="19.0" layoutY="36.0" prefHeight="35.0" prefWidth="209.0" text="Gravitation [m/s²]">
 					<font>
 						<Font name="Avenir Next Bold" size="14.0" />
 					</font>
 				</Label>
-				<Slider fx:id="StartVSlider" layoutX="20.0" layoutY="249.0" max="50.0" onMouseReleased="#onMouseReleased" prefHeight="15.0" prefWidth="213.0" showTickLabels="true" />
-				<Label fx:id="GravityLabel" layoutX="35.0" layoutY="144.0" prefHeight="24.0" prefWidth="175.0">
+				<Label layoutX="17.0" layoutY="144.0" prefHeight="35.0" prefWidth="209.0" text="Startgeschwindigkeit [m/s]">
+					<font>
+						<Font name="Avenir Next Bold" size="14.0" />
+					</font>
+				</Label>
+				<Slider fx:id="StartVSlider" layoutX="19.0" layoutY="188.0" max="50.0" onMouseReleased="#onMouseReleased" prefHeight="15.0" prefWidth="213.0" showTickLabels="true" />
+				<Label fx:id="GravityLabel" layoutX="35.0" layoutY="113.0" prefHeight="24.0" prefWidth="175.0">
 					<font>
 						<Font name="Avenir Next Bold" size="10.0" />
 					</font>
 				</Label>
-				<Label fx:id="StartVLabel" layoutX="35.0" layoutY="301.0" prefHeight="24.0" prefWidth="175.0">
+				<Label fx:id="StartVLabel" layoutX="40.0" layoutY="233.0" prefHeight="24.0" prefWidth="175.0">
 					<font>
 						<Font name="Avenir Next Bold" size="10.0" />
 					</font>
 				</Label>
-				<Button fx:id="StartButton" layoutX="22.0" layoutY="365.0" mnemonicParsing="false" onMouseReleased="#onStart" prefHeight="74.0" prefWidth="101.0" text="Start">
+				<Button fx:id="StartButton" layoutX="12.0" layoutY="292.0" mnemonicParsing="false" onMouseReleased="#onStart" prefHeight="65.0" prefWidth="100.0" text="Start">
 					<font>
 						<Font name="Avenir Next Bold" size="24.0" />
 					</font>
 				</Button>
-            <Label fx:id="vxAnzeige" layoutX="18.0" layoutY="504.0" prefHeight="30.0" prefWidth="216.0" />
-            <Label layoutX="22.0" layoutY="469.0" prefHeight="35.0" prefWidth="209.0" text="Geschwindigkeit:">
+            <Label fx:id="vxAnzeige" layoutX="17.0" layoutY="529.0" prefHeight="30.0" prefWidth="216.0" />
+            <Label layoutX="17.0" layoutY="497.0" prefHeight="35.0" prefWidth="209.0" text="Geschwindigkeit:">
                <font>
                   <Font name="Avenir Next Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="vyAnzeige" layoutX="17.0" layoutY="545.0" prefHeight="30.0" prefWidth="216.0" />
-            <Button fx:id="cpButton" layoutX="127.0" layoutY="365.0" mnemonicParsing="false" onMouseReleased="#onCP" prefHeight="74.0" prefWidth="101.0" text="Position ändern">
+            <Label fx:id="vyAnzeige" layoutX="15.0" layoutY="565.0" prefHeight="30.0" prefWidth="216.0" />
+            <Button fx:id="cpButton" layoutX="133.0" layoutY="293.0" mnemonicParsing="false" onMouseReleased="#onCP" prefHeight="65.0" prefWidth="100.0" text="Position ändern">
                <font>
                   <Font name="Avenir Next Bold" size="10.0" />
                </font>
             </Button>
+            <Slider fx:id="rotateE" blockIncrement="45.0" layoutX="14.0" layoutY="426.0" majorTickUnit="45.0" max="180.0" onMouseReleased="#onRotate" prefHeight="15.0" prefWidth="213.0" showTickLabels="true" />
+            <Label layoutX="21.0" layoutY="392.0" prefHeight="35.0" prefWidth="209.0" text="Drehung der Ebene">
+               <font>
+                  <Font name="Avenir Next Bold" size="14.0" />
+               </font>
+            </Label>
+            <Button fx:id="drehenButton" layoutX="15.0" layoutY="464.0" mnemonicParsing="false" onMouseReleased="#onChangeRotation" prefHeight="26.0" prefWidth="213.0" text="Drehung auf 0° einstellen. " />
 			</children>
 		</Pane>
 	</right>

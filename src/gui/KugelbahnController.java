@@ -44,6 +44,10 @@ public class KugelbahnController {
 	private Label vxAnzeige;
 	@FXML
 	private Label vyAnzeige;
+	@FXML
+	private Slider rotateE;
+	@FXML
+	private Button drehenButton;
 
 	Canvas canvas;
 
@@ -161,7 +165,13 @@ public class KugelbahnController {
 		lines.add(new Line(750, 0, 750, 650)); // oben rechts --> unten rechts
 		lines.add(new Line(750, 650, 0, 650)); // unten rechts --> unten links
 		lines.add(new Line(0, 650, 0, 0)); //unten links --> oben links
-
+		
+		//Ränder der geraden Ebene
+		//lines.add(new Line(30, 300, 330, 300)); //oben links --> oben rechts
+		//lines.add(new Line(330, 300, 330, 350)); // oben rechts --> unten rechts
+		//lines.add(new Line(330, 350, 30, 350)); // unten rechts --> unten links
+		//lines.add(new Line(30, 350, 30, 300)); //unten links --> oben links
+		
 		//Animation
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
@@ -174,6 +184,25 @@ public class KugelbahnController {
 	public void onCP() {
 		System.out.println("Change Position activated.");
 		makeDraggable(Kugel);
+		makeDraggable(Ebene1);
+	}
+	
+	//Rotation Slider auslesen und Wert anzeigen
+	@FXML
+	public void onRotate() {
+		int angle = (int) rotateE.getValue();
+		System.out.println("Angle changed to: " + angle);
+		drehenButton.setText("Drehung auf " + angle + "° einstellen.");
+		
+		//System.out.println(Ebene1.getLayoutY());
+		
+	}
+	
+	//Rotation ausführen über Button
+	@FXML
+	public void onChangeRotation() {
+		onRotate();
+		Ebene1.setRotate(rotateE.getValue());
 	}
 
 	// Drag and Drop Funktion
