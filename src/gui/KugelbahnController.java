@@ -113,8 +113,8 @@ public class KugelbahnController {
 		sy = sy + vy * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
 		//Anzeige der Geschwindigkeit
-		vxAnzeige.setText("x-Richtung: " + vx);
-		vyAnzeige.setText("y-Richtung: " + vy);
+		vxAnzeige.setText("x-Richtung: " + (int) vx);
+		vyAnzeige.setText("y-Richtung: " + (int) vy);
 
 
 		/** ---Alte Kollisionserkennung der Wände---
@@ -167,7 +167,7 @@ public class KugelbahnController {
 		lines.add(new Line(0, 650, 0, 0)); //unten links --> oben links
 		
 		//Ränder der geraden Ebene
-		//lines.add(new Line(30, 300, 330, 300)); //oben links --> oben rechts
+		//lines.add(new Line(30, 300, 330, 300)); //oben links --> oben rechts			///////////////////////////
 		//lines.add(new Line(330, 300, 330, 350)); // oben rechts --> unten rechts
 		//lines.add(new Line(330, 350, 30, 350)); // unten rechts --> unten links
 		//lines.add(new Line(30, 350, 30, 300)); //unten links --> oben links
