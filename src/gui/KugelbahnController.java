@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.animation.RotateTransition;
 import javafx.fxml.FXML;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -22,6 +23,8 @@ public class KugelbahnController {
 
 	@FXML
 	private Circle Kugel;
+	@FXML
+	private Circle Kugel2;
 	@FXML
 	private Pane MainBG;
 	@FXML
@@ -48,6 +51,10 @@ public class KugelbahnController {
 	private Slider rotateE;
 	@FXML
 	private Button drehenButton;
+	@FXML
+	private Rectangle spinner;
+	@FXML
+	private Line lineEbene;
 
 	Canvas canvas;
 
@@ -97,10 +104,14 @@ public class KugelbahnController {
 
 		//Bei einer Kollision wird die Richtung der Kugel geändert
 		lines.forEach((line)-> {
-			//System.out.println(getDistance(line));
 			if(getDistance(line) <= radius) {
-				System.out.println("Kollision");
-				changeDirection(line);
+				System.out.println("Mögliche Kollision");
+
+				//Testen ob Lotfußpunkt auf der Linie oder nur auf der Höhe der Linie liegt
+				if(inLine(getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line), line)) {
+					System.out.println("in line --> Tatsächliche Kollision");
+					changeDirection(line);
+				}
 			}
 		});
 
@@ -115,39 +126,16 @@ public class KugelbahnController {
 		//Anzeige der Geschwindigkeit
 		vxAnzeige.setText("x-Richtung: " + (int) vx);
 		vyAnzeige.setText("y-Richtung: " + (int) vy);
-
-
-		/** ---Alte Kollisionserkennung der Wände---
-		if(checkCollision(Kugel, Ebene1)) {
-			vy = -vy;			
-			//System.out.println("Kugel bewegt sich mit Geschwindigkeit " + vy  + " in Y-Richtung");
-		}
-
-		else if(Kugel.getLayoutY() >= 614) {
-			//System.out.println("Boden");
-			vy = -500;
-		}
-
-		else if(Kugel.getLayoutX() >= 714) {
-			//System.out.println("Rechte Wand");
-			vx = -400;
-		}
-
-		else if(Kugel.getLayoutX() <= 36) {
-			//System.out.println("Linke Wand");
-			vx = 100;
-		}
-
-		if(in()) {
-			Kugel.setLayoutX(sx);
-			Kugel.setLayoutY(300 - 36);
-			System.out.println(vx + " " + vy);
-		}*/
 	}
+
 
 	// Startknopf betätigen --> Kugel fängt an sich zu bewegen
 	@FXML
 	public void onStart() {
+
+		//inLine(new Point2D(2, 3), new Line(1, 1, 3, 3));
+		//inLine(new Point2D(2, 2), new Line(1, 1, 3, 3));
+
 		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
 		System.out.println("Button pressed.");
@@ -165,44 +153,67 @@ public class KugelbahnController {
 		lines.add(new Line(750, 0, 750, 650)); // oben rechts --> unten rechts
 		lines.add(new Line(750, 650, 0, 650)); // unten rechts --> unten links
 		lines.add(new Line(0, 650, 0, 0)); //unten links --> oben links
-		
+
+		//Linie Ebene
+		//System.out.println("StartX: " + lineEbene.getLayoutX() + " StartY: " + lineEbene.getLayoutY() 
+		//+ " EndX: " + lineEbene.getEndX() + " EndY: " + lineEbene.getEndY());
+
+		//Testlinie
+		lines.add(new Line(30, 200, 200 , 200));
+
+
+		//LineEbene Linie
+		//lines.add(new Line(lineEbene.getStartX(), lineEbene.getStartY(), lineEbene.getEndX(), lineEbene.getEndY()));
+
+
 		//Ränder der geraden Ebene
-		//lines.add(new Line(30, 300, 330, 300)); //oben links --> oben rechts			///////////////////////////
+		//lines.add(new Line(30, 300, 330, 300)); //oben links --> oben rechts
 		//lines.add(new Line(330, 300, 330, 350)); // oben rechts --> unten rechts
 		//lines.add(new Line(330, 350, 30, 350)); // unten rechts --> unten links
 		//lines.add(new Line(30, 350, 30, 300)); //unten links --> oben links
-		
+
+
 		//Animation
 		GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 		Timeline timeline = new Timeline(new KeyFrame(Duration.millis(dT*1000),e -> movement(graphicsContext, gravityValue * 350)));
 		timeline.setCycleCount(Timeline.INDEFINITE);
 		timeline.play();
+
+
+		//Rotation of Spinner
+		RotateTransition spin = new RotateTransition();
+		spin.setByAngle(360);
+		spin.setCycleCount(500);
+		spin.setDuration(Duration.millis(1000));
+		spin.setNode(spinner);
+		spin.play();
 	}
+
 
 	//Change Position Button (Drag & Drop)
 	@FXML
 	public void onCP() {
 		System.out.println("Change Position activated.");
 		makeDraggable(Kugel);
-		makeDraggable(Ebene1);
+		makeDraggable(Kugel2);
+		makeDraggable(lineEbene);
+
 	}
-	
+
 	//Rotation Slider auslesen und Wert anzeigen
 	@FXML
 	public void onRotate() {
 		int angle = (int) rotateE.getValue();
 		System.out.println("Angle changed to: " + angle);
 		drehenButton.setText("Drehung auf " + angle + "° einstellen.");
-		
-		//System.out.println(Ebene1.getLayoutY());
-		
 	}
-	
+
+
 	//Rotation ausführen über Button
 	@FXML
 	public void onChangeRotation() {
 		onRotate();
-		Ebene1.setRotate(rotateE.getValue());
+		lineEbene.setRotate(rotateE.getValue());
 	}
 
 	// Drag and Drop Funktion
@@ -221,11 +232,9 @@ public class KugelbahnController {
 		});
 	}
 
+	/**
 	//Kollisionserkennung der Ebene (noch mit festen Werten)
 	public boolean checkCollision(Circle Kugel, Rectangle Ebene1) {
-		//if(Kugel.getBoundsInParent().intersects(Ebene1.getBoundsInParent())) {
-		//System.out.println("Kollision");
-		//}
 
 		//Kollision obere Kante
 		if(Kugel.getLayoutX() - radius >= 30 
@@ -274,11 +283,56 @@ public class KugelbahnController {
 		}
 		return false;
 	}
+	 */
+	//Prüfen, ob sich ein Punkt zwischen dem Start- und Endpunkt einer Linie befindet
+	public boolean inLine(Point2D point, Line line) {
+
+		//Richtungsvektoren der Linie (X und Y)
+		double richtungX = line.getEndX() - line.getStartX();
+		double richtungY = line.getEndY() - line.getStartY();
+
+		//Prüfen, ob Punkt != (ungleich) Startpunkt der Linie ist, da in diesem Falle der Punkt nicht auf der Linie ist (=False)
+		if(richtungX == 0 && point.getX() != line.getStartX()) {
+			return false;
+		}
+
+		if(richtungY == 0 && point.getY() != line.getStartY()) {
+			return false;
+		}
+
+		//Prüfen, ob Punkt = (gleich) Startpunkt der Linie ist, da in diesem Falle der Punkt auf der Linie liegen könnte
+		if(richtungX == 0 && point.getX() == line.getStartX()) {
+			double p2 = (point.getY() - line.getStartY()) / richtungY; //Parameter der Geradengleichung ausrechnen (für Y)
+			return 0 <= p2 && p2 <= 1; //Prüfen ob der Parameter zwischen 0 und 1 liegt (=Punkt liegt in der Linie)
+		}
+
+		if(richtungY == 0 && point.getY() == line.getStartY()) {
+			double p1 = (point.getX() - line.getStartX()) / richtungX; //Parameter der Geradengleichung ausrechnen (für X)
+			return 0 <= p1 && p1 <= 1; //Prüfen ob der Parameter zwischen 0 und 1 liegt (=Punkt liegt in der Linie)
+		}
+
+		//Falls alle if-Abfragen nicht zutreffen: 1. Parameter wird ausgerechnet
+		double p1 = (point.getX() - line.getStartX()) / richtungX;
+		double p2 = (point.getY() - line.getStartY()) / richtungY;
+
+		//System.out.println("p1: " + p1 + " p2: " + p2);
+
+		//Prüfen ob der Parameter für X und Y gleich sind und ob er zwischen 0 und 1 liegt
+		if(p1 == p2 && 0 <= p1 && p1 <= 1) {
+			return true;
+			//System.out.println("In Line True");
+		}else {
+			return false;
+			//System.out.println("In Line False");
+		}
+	}
+
 
 	//Vektorlänge berechnen
 	public double getVectorLength(double x, double y) {
 		return Math.sqrt(x*x + y*y);
 	}
+
 
 	//Lotfußpunkt berechnen
 	public Point2D getBasePoint(Point2D point, Line line) {
@@ -297,11 +351,14 @@ public class KugelbahnController {
 		return new Point2D(line.getStartX() + richtungsvektor.getX() / scale, line.getStartY() + richtungsvektor.getY() / scale);
 	}
 
+
 	//Distanz zwischen Kugel und Ebene berechnen
 	public double getDistance(Line line) {
 		Point2D basepoint = getBasePoint(new Point2D(Kugel.getLayoutX(), Kugel.getLayoutY()), line);
+
 		return getVectorLength(basepoint.getX() - Kugel.getLayoutX(), basepoint.getY() - Kugel.getLayoutY());
 	}
+
 
 	// Kollisionshandling: Wände 
 	public void changeDirection(Line line) {
@@ -319,5 +376,4 @@ public class KugelbahnController {
 		vx = sum.getX();
 		vy = sum.getY();
 	}
-
 }
