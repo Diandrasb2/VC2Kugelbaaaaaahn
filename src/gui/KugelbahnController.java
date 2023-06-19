@@ -147,6 +147,7 @@ public class KugelbahnController {
 			}
 		});
 
+		/**
 		if(circleCollision(Kugel, Kugel2)) {
 			vx = circleCollisionV(m1, m2, vx, vx2);
 			vy = circleCollisionV(m1, m2, vy, vy2);
@@ -161,6 +162,7 @@ public class KugelbahnController {
 			
 			
 		}
+		*/
 		
 		//Berechnung für die nächste Bewegung
 		vx = vx + 0 * dT; 
@@ -281,7 +283,7 @@ public class KugelbahnController {
 	public void onRotate() {
 		int angle = (int) rotateE.getValue();
 		System.out.println("Angle changed to: " + angle);
-		drehenButton.setText("Drehung auf " + angle + "° einstellen.");
+		//drehenButton.setText("Drehung auf " + angle + "° einstellen.");
 		
 		//System.out.println("LinieD -- StartX: " + lineEbene.getStartX() + " StartY: " + lineEbene.getStartY() 
 		//+ " EndX: " + lineEbene.getEndX() + " EndY: " + lineEbene.getEndY());
@@ -312,12 +314,13 @@ public class KugelbahnController {
 		
 	}
 
-
+/**
 	//Rotation ausführen über Button
 	@FXML
 	public void onChangeRotation() {
 		onRotate();
 	}
+	*/
 
 	//Neustart
 	@FXML
