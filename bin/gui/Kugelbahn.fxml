@@ -42,13 +42,13 @@
 						<Font name="Avenir Next Bold" size="28.0" />
 					</font>
 				</Button>
-            <Label fx:id="vxAnzeige" layoutX="17.0" layoutY="434.0" prefHeight="32.0" prefWidth="216.0" textFill="WHITE" />
+            <Label fx:id="vxAnzeige" layoutX="17.0" layoutY="434.0" prefHeight="32.0" prefWidth="216.0" text="x-Richtung: 0&#10;y-Richtung: 0&#10;" textFill="WHITE" />
             <Label layoutX="19.0" layoutY="399.0" prefHeight="35.0" prefWidth="209.0" text="Geschwindigkeit der Kugel:" textFill="#e8e8e8">
                <font>
                   <Font name="Avenir Next Bold" size="14.0" />
                </font>
             </Label>
-            <Label fx:id="vyAnzeige" layoutX="16.0" layoutY="468.0" prefHeight="39.0" prefWidth="216.0" textFill="WHITE" />
+            <Label fx:id="vyAnzeige" layoutX="16.0" layoutY="468.0" prefHeight="39.0" prefWidth="216.0" text="x-Richtung 2: 0&#10;y-Richtung 2: 0" textFill="WHITE" />
             <Button fx:id="cpButton" layoutX="132.0" layoutY="521.0" mnemonicParsing="false" onMouseReleased="#onCP" prefHeight="65.0" prefWidth="106.0" style="-fx-background-color: FFFFB1;" text="Position&#10;ändern" textAlignment="CENTER">
                <font>
                   <Font name="Avenir Next Bold" size="18.0" />

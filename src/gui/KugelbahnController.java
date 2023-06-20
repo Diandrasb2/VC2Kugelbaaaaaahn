@@ -65,6 +65,8 @@ public class KugelbahnController {
 	private Button resumeButton;
 
 	Canvas canvas;
+	
+	private Timeline timeline;
 
 	double KugelPositionY;
 
@@ -93,7 +95,7 @@ public class KugelbahnController {
 	//Masse
 	double m1 = 500;
 	double m2 = 500;
-
+	
 
 	// Liste von Linien vom Fenster wird erstellt
 	ArrayList<Line> lines = new ArrayList<Line>();
@@ -174,22 +176,20 @@ public class KugelbahnController {
 		sx2 = sx2 + vx2 * dT + 0.5 * 1 * Math.pow(dT, 2);
 		sy2 = sy2 + vy2 * dT + 0.5 * gravityValue * Math.pow(dT, 2);
 
-		//Anzeige der Geschwindigkeit
+		//Anzeige der Geschwindigkeiten
 		vxAnzeige.setText("x-Richtung: " + (int) vx + "\ny-Richtung: " + (int) vy);
 		vyAnzeige.setText("x-Richtung 2: " + (int) vx2 + "\ny-Richtung 2: " + (int) vy2);
 	}
-
-	private Timeline timeline;
 
 
 	// Startknopf betätigen --> Simulation startet
 	@FXML
 	public void onStart() {
-
+		System.out.println("Button pressed.");
+		
 		canvas = new Canvas(750, 650);
 		double gravityValue = GravitySlider.getValue();
-		System.out.println("Button pressed.");
-
+		
 		// Startgeschwindigkeit (weiß)
 		vx = 300; 
 		vy = StartVSlider.getValue();
@@ -213,12 +213,11 @@ public class KugelbahnController {
 		lines.add(new Line(0, 650, 0, 0)); //unten links --> oben links
 
 
-		//LineEbene Linie
+		//LineEbene gelbe Linie
 		lines.add(new Line(lineEbene.getStartX(), lineEbene.getStartY(), lineEbene.getEndX(), lineEbene.getEndY()));
 
 		//System.out.println("Linie -- StartX: " + lineEbene.getStartX() + " StartY: " + lineEbene.getStartY() 
 		//+ " EndX: " + lineEbene.getEndX() + " EndY: " + lineEbene.getEndY());
-
 
 
 		//Animation
@@ -246,7 +245,7 @@ public class KugelbahnController {
 	}
 
 
-	// Fortsetzen-Funktion -- da Pausier-Funktion nicht funktioniert, wurde diese auch weggelassen
+	// Fortsetzen-Funktion -- da Pausier-Funktion nicht funktioniert, wurde Fortsetzen auch weggelassen
 	@FXML
 	private void onResume() {
 		//if(timeline != null) {
@@ -255,7 +254,7 @@ public class KugelbahnController {
 	}
 
 
-	//Change Position Button (Drag & Drop)
+	//Change Position Button (Drag & Drop aktivieren)
 	@FXML
 	public void onCP() {
 		System.out.println("Change Position activated.");
@@ -437,6 +436,7 @@ public class KugelbahnController {
 		return getVectorLength(basepoint.getX() - circle.getLayoutX(), basepoint.getY() - circle.getLayoutY());
 	}
 
+	
 	/** Ansatz:
 	 * Verhindern, dass die Kugel zittert (Überprüfung, ob die Distanz zwischen zwei Frames zu oder abnimmt)
 
@@ -489,7 +489,7 @@ public class KugelbahnController {
 	}
 
 
-	// Prüfen, ob zwei Kugeln miteinander kollidieren
+	// Prüfen, ob zwei Kugeln miteinander kollidieren (wird über die Distanz zwischen den zwei Kugeln geprüft)
 	public boolean circleCollision(Circle circle, Circle circle2) {
 		double circleDistance = Math.sqrt(Math.pow(circle2.getLayoutX() - circle.getLayoutX(), 2) + Math.pow(circle2.getLayoutY() - circle.getLayoutY(), 2));
 
@@ -501,7 +501,7 @@ public class KugelbahnController {
 		}
 	}
 
-
+	//Normale von Center1 zu Center2 wird gebildet für Kugelkollision
 	public Point2D normalCircle(Circle circle1, Circle circle2) {
 
 		Point2D centerC1 = new Point2D(circle1.getCenterX(), circle1.getCenterY());
@@ -519,29 +519,25 @@ public class KugelbahnController {
 		double vx12 = vx - vx2;
 		double vy12 = vy - vy2;
 
-		//Point2D divV = new Point2D(vx12, vy12);
 
 		//Skalarprodukt aus normalCollision (Normale) und divV (Differenz aus den Geschwindigkeiten der zwei Kugeln)
-		//double divVNormal = normalCircle(Kugel, Kugel2).getX() * vx12 
-		//+ normalCircle(Kugel, Kugel2).getY() * vy12;
-
 		double divVNormal = normalCircle(Kugel, Kugel2).dotProduct(vx12, vy12);
-
 
 		// --> divVNormal zeigt die Geschwindigkeit der Kugeln wie sie sich aufeinander zu bewegen
 
-
+		//Impuls wird berechnet
 		double impulse = (2 * m1 * m2 * divVNormal) / (m1 + m2);
+		//System.out.println("Impulse: " + impulse);
 
+		//Geschwindigkeiten der Kugeln wird aktualisiert
 		vx = -(vx - (impulse * normalCircle(Kugel, Kugel2).getX() / m1));
 		vy = -(vy - (impulse * normalCircle(Kugel, Kugel2).getY() / m1));
 
 		vx2 = -(vx2 - (impulse * normalCircle(Kugel, Kugel2).getX() / m2));
 		vy2 = -(vy2 - (impulse * normalCircle(Kugel, Kugel2).getY() / m2));
 
-		System.out.println("Impulse: " + impulse);
-
-		// Position der Kugeln updaten
+		
+		// Position der Kugeln aktualisieren
 		Kugel.setLayoutX(sx);
 		Kugel.setLayoutY(sy);
 
