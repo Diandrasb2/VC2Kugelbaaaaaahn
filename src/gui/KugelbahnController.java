@@ -63,7 +63,11 @@ public class KugelbahnController {
 	private Button stopButton;
 	@FXML
 	private Button resumeButton;
-
+	@FXML
+	private Slider masse1;
+	@FXML
+	private Slider masse2;
+	
 	Canvas canvas;
 	
 	private Timeline timeline;
@@ -91,10 +95,6 @@ public class KugelbahnController {
 
 	//Radius Kugel
 	double radius = 36;
-
-	//Masse
-	double m1 = 500;
-	double m2 = 500;
 	
 
 	// Liste von Linien vom Fenster wird erstellt
@@ -270,7 +270,9 @@ public class KugelbahnController {
 	public void onRotate() {
 		int angle = (int) rotateE.getValue();
 		System.out.println("Angle changed to: " + angle);
-
+		drehenButton.setText("Drehung auf " + angle + "° einstellen");
+		
+		/**
 		//Aktuelle Position der Linie
 		double LStartX = lineEbene.getStartX();
 		double LStartY = lineEbene.getStartY();
@@ -281,8 +283,6 @@ public class KugelbahnController {
 		//System.out.println("Before Rotation: StartX: " + lineEbene.getStartX() + " StartY: " + lineEbene.getStartY() + 
 		//		" EndX: " + lineEbene.getEndX() + " EndY: " + lineEbene. getEndY());
 
-		//Rotation durchführen
-		lineEbene.setRotate(rotateE.getValue());
 
 		//Rotation auch auf die Koordinaten vom Start- und Endpunkt der Linie anwenden
 		Point2D lineStart = lineEbene.localToParent(LStartX, LStartY);
@@ -297,8 +297,14 @@ public class KugelbahnController {
 
 		//System.out.println("After Rotation: StartX: " + lineEbene.getStartX() + " StartY: " + lineEbene.getStartY() + 
 		//		" EndX: " + lineEbene.getEndX() + " EndY: " + lineEbene. getEndY());
+	*/
 	}
 
+	@FXML
+	public void onChangeRotation() {
+		onRotate();
+		lineEbene.setRotate(rotateE.getValue());
+	}
 
 	//Neustart
 	@FXML
@@ -368,7 +374,8 @@ public class KugelbahnController {
 		double richtungX = line.getEndX() - line.getStartX();
 		double richtungY = line.getEndY() - line.getStartY();
 
-		//Prüfen, ob Punkt != (ungleich) Startpunkt der Linie ist, da in diesem Falle der Punkt nicht auf der Linie ist (=False)
+		//Prüfen, ob Punkt != (ungleich) Startpunkt der Linie ist während der Richtungsvektor 0 ist, 
+		//da in diesem Falle der Punkt nicht auf der Linie ist (=False)
 		if(richtungX == 0 && point.getX() != line.getStartX()) {
 			return false;
 		}
@@ -404,6 +411,18 @@ public class KugelbahnController {
 		}
 	}
 
+	@FXML
+	public void onMasse1() {
+		Kugel.setRadius(masse1.getValue());
+		System.out.println("Radius1: " + Kugel.getRadius());
+	}
+	
+	@FXML
+	public void onMasse2() {
+		Kugel2.setRadius(masse2.getValue());
+		System.out.println("Radius2: " + Kugel2.getRadius());
+	}
+	
 
 	//Vektorlänge berechnen
 	public double getVectorLength(double x, double y) {
@@ -488,7 +507,6 @@ public class KugelbahnController {
 		vy2 = sum.getY();
 	}
 
-
 	// Prüfen, ob zwei Kugeln miteinander kollidieren (wird über die Distanz zwischen den zwei Kugeln geprüft)
 	public boolean circleCollision(Circle circle, Circle circle2) {
 		double circleDistance = Math.sqrt(Math.pow(circle2.getLayoutX() - circle.getLayoutX(), 2) + Math.pow(circle2.getLayoutY() - circle.getLayoutY(), 2));
@@ -513,13 +531,20 @@ public class KugelbahnController {
 		return normalCollision;
 	}
 
-
+	//Kollisionshandling Kugel-Kugel
 	public void collisionCircles() {
 
 		double vx12 = vx - vx2;
 		double vy12 = vy - vy2;
 
+		//Masse
+		double m1 = masse1.getValue() * 1000;
+		double m2 = masse2.getValue() * 1000;
+		
+		System.out.println("Masse1: " + m1);
+		System.out.println("Masse2: " + m2);
 
+	
 		//Skalarprodukt aus normalCollision (Normale) und divV (Differenz aus den Geschwindigkeiten der zwei Kugeln)
 		double divVNormal = normalCircle(Kugel, Kugel2).dotProduct(vx12, vy12);
 
@@ -536,7 +561,20 @@ public class KugelbahnController {
 		vx2 = -(vx2 - (impulse * normalCircle(Kugel, Kugel2).getX() / m2));
 		vy2 = -(vy2 - (impulse * normalCircle(Kugel, Kugel2).getY() / m2));
 
+/*	Formeln hier drüber haben wir oft angepasst und Elemente verändert, bis es funktioniert hat. 
+ * Die Quelle konnten wir deshalb im Nachinein nicht mehr finden. 
+ * 
+ * Diese Formeln stammen von Wikipedia, doch sie funktionieren nicht. 
+ 
+		double k = 0.6;
 		
+		vx = -((m1 * vx + m2 * vx2 - m2 * (vx - vx2) * k)/ (m1 + m2));
+		vy = -((m1 * vy + m2 * vy2 - m2 * (vy - vy2) * k)/ (m1 + m2));
+		
+		vx2 = -((m1 * vx + m2 * vx2 - m1 * (vx2 - vx) * k)/ (m1 + m2));
+		vy2 = -((m1 * vy + m2 * vy2 - m1 * (vy2 - vy) * k)/ (m1 + m2));
+		*/
+
 		// Position der Kugeln aktualisieren
 		Kugel.setLayoutX(sx);
 		Kugel.setLayoutY(sy);
